@@ -1,0 +1,9 @@
+global using Microsoft.EntityFrameworkCore;
+global using System.Text.Json;
+global using System.Text.Json.Serialization;
+global using System.Security.Claims;
+global using CasaLog.Api.Data;
+global using CasaLog.Api.Data.Entities;
+global using CasaLog.Api.Agents;
+global using CasaLog.Api.Infrastructure.Security;
+global using CasaLog.Api.Extensions;

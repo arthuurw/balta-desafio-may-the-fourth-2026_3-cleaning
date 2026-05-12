@@ -1,0 +1,47 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.DotSettings.user
+TestResults/
+*.nupkg
+*.snupkg
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Secrets / configs locais
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
+# Node
+node_modules/
+dist/
+.next/
+out/
+.cache/
+*.tsbuildinfo
+
+# Env
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ferramentas / docs internas
+.claude/
+CLAUDE.md
+AGENTS.md
+docs/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
