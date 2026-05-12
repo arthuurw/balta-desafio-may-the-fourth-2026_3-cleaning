@@ -17,11 +17,19 @@ const makeTask = (month: number, overrides?: Partial<Task>): Task => ({
   ...overrides,
 })
 
+const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+const currentMonthLabel = MONTHS[new Date().getMonth()]
+
 describe('MaintenanceCalendar', () => {
   it('renders 12 month cells', () => {
     render(<MaintenanceCalendar tasks={[]} />)
-    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-    months.forEach((m) => expect(screen.getByText(m)).toBeDefined())
+    const dashes = screen.getAllByText('—')
+    expect(dashes.length).toBe(12)
+  })
+
+  it('shows current month as first cell', () => {
+    render(<MaintenanceCalendar tasks={[]} />)
+    expect(screen.getByText(currentMonthLabel)).toBeDefined()
   })
 
   it('shows task label in correct month', () => {
@@ -36,14 +44,8 @@ describe('MaintenanceCalendar', () => {
     expect(screen.queryByText('Ar-Condicionado')).toBeNull()
   })
 
-  it('shows current year in header', () => {
+  it('shows rolling window header', () => {
     render(<MaintenanceCalendar tasks={[]} />)
-    expect(screen.getByText(new RegExp(String(currentYear)))).toBeDefined()
-  })
-
-  it('shows em dash for empty months', () => {
-    render(<MaintenanceCalendar tasks={[]} />)
-    const dashes = screen.getAllByText('—')
-    expect(dashes.length).toBe(12)
+    expect(screen.getByText(/próximos 12 meses/i)).toBeDefined()
   })
 })

@@ -36,7 +36,7 @@ public static class CompleteTaskHandler
         ScheduledTask? nextTask = null;
         try
         {
-            var reschedule = await agent.RescheduleTaskAsync(home, task, skipped: false, ct);
+            var reschedule = await agent.RescheduleTaskAsync(home, task, skipped: false, req.Notes, ct);
             if (DateOnly.TryParse(reschedule.NewDate, out var newDate))
             {
                 nextTask = new ScheduledTask

@@ -6,7 +6,7 @@ function getToken(): string {
   return localStorage.getItem('token') ?? ''
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function request<T = void>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     ...options,
     headers: {
@@ -19,6 +19,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const body = await res.json().catch(() => ({}))
     throw new Error(body.error ?? `HTTP ${res.status}`)
   }
+  if (res.status === 204 || res.headers?.get('content-length') === '0') return undefined as T
   return res.json() as Promise<T>
 }
 
@@ -52,10 +53,7 @@ export const api = {
         body: JSON.stringify({ type, name, installedAt }),
       }),
     remove: (homeId: string, equipmentId: string) =>
-      fetch(`${BASE}/homes/${homeId}/equipment/${equipmentId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${getToken()}` },
-      }),
+      request(`/homes/${homeId}/equipment/${equipmentId}`, { method: 'DELETE' }),
   },
 
   tasks: {
@@ -80,10 +78,7 @@ export const api = {
   alerts: {
     get: () => request<Alert[]>('/alerts'),
     markRead: (alertId: string) =>
-      fetch(`${BASE}/alerts/${alertId}/read`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${getToken()}` },
-      }),
+      request(`/alerts/${alertId}/read`, { method: 'PUT' }),
   },
 
   chat: {

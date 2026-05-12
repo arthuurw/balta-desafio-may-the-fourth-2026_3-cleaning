@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# CasaLog — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + TypeScript + Vite + Tailwind CSS v4. Interface do app de manutenção residencial CasaLog.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS v4
+- Vitest + Testing Library
 
-## React Compiler
+## Estrutura
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/
+│   ├── AuthForm.tsx             # Login e cadastro
+│   ├── HomeSetup.tsx            # Cadastro de residência + equipamentos
+│   ├── MaintenanceCalendar.tsx  # Calendário mensal de tarefas
+│   ├── TaskList.tsx             # Lista de tarefas com ações concluir/pular
+│   ├── AlertsPanel.tsx          # Painel de alertas da IA
+│   ├── ChatAgent.tsx            # Chat com o agente de manutenção
+│   └── HelpPage.tsx             # Guia de funcionalidades do app
+├── contexts/
+│   └── AuthContext.tsx          # JWT auth context
+├── services/
+│   └── api.ts                   # Cliente HTTP tipado
+├── types/                       # Tipos compartilhados
+└── App.tsx                      # Roteamento condicional (sem React Router)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Configuração
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Criar `frontend/.env.local`:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+VITE_API_URL=http://localhost:5059
+```
+
+## Comandos
+
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm test         # Vitest
+npm run build
+npm run lint
+```
+
+## Fluxo de navegação
+
+O roteamento é feito por conditional rendering em `App.tsx` — sem React Router:
+
+1. Não autenticado → `<AuthForm />`
+2. Autenticado, sem residência → `<HomeSetup />`
+3. Autenticado, com residência → layout com 5 abas: **Calendário | Tarefas | Alertas | Chat IA | ?**
+
+## Abas
+
+| Aba | Componente | Descrição |
+|-----|-----------|-----------|
+| Calendário | `MaintenanceCalendar` | Tarefas agrupadas por mês, cores por prioridade |
+| Tarefas | `TaskList` | Lista com filtro por status, ações concluir/pular, notas |
+| Alertas | `AlertsPanel` | Alertas gerados pela IA, marcar como lido |
+| Chat IA | `ChatAgent` | Chat com o agente de manutenção residencial |
+| ? | `HelpPage` | Guia completo: funcionalidades, tipos de manutenção, sazonalidade |
+
+## Testes
+
+```bash
+npm test    # 25 testes (Vitest + Testing Library)
+```
+
+Cobertura: `api.ts`, `MaintenanceCalendar`, `AuthForm`, `ChatAgent`, `AlertsPanel`.

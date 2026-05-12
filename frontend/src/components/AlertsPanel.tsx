@@ -12,7 +12,7 @@ const ALERT_ICONS: Record<string, string> = {
 const ALERT_COLORS: Record<string, string> = {
   approaching: 'border-orange-200 bg-orange-50',
   overdue: 'border-red-200 bg-red-50',
-  seasonal: 'border-green-200 bg-green-50',
+  seasonal: 'border-purple-200 bg-purple-50',
 }
 
 export function AlertsPanel() {

@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { AlertsPanel } from '../components/AlertsPanel'
+import type { Alert } from '../types'
 
 vi.mock('../services/api', () => ({
   api: {
@@ -13,7 +14,7 @@ vi.mock('../services/api', () => ({
 
 import { api } from '../services/api'
 
-const mockAlerts = [
+const mockAlerts: Alert[] = [
   {
     id: 'a1',
     type: 'overdue',
@@ -49,7 +50,7 @@ describe('AlertsPanel', () => {
 
   it('removes alert after mark read', async () => {
     vi.mocked(api.alerts.get).mockResolvedValue(mockAlerts)
-    vi.mocked(api.alerts.markRead).mockResolvedValue(new Response())
+    vi.mocked(api.alerts.markRead).mockResolvedValue(undefined)
     render(<AlertsPanel />)
     await waitFor(() => screen.getByText('Filtro de água vencido há 30 dias'))
     fireEvent.click(screen.getByRole('button', { name: '✕' }))

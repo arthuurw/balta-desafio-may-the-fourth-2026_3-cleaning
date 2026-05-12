@@ -21,6 +21,9 @@ public static class ChatHandler
         if (string.IsNullOrWhiteSpace(req.Message))
             return Results.BadRequest(new { error = "Message is required." });
 
+        if (req.Message.Length > 2000)
+            return Results.BadRequest(new { error = "Message must be 2000 characters or fewer." });
+
         if (InjectionPatterns.Any(p => req.Message.Contains(p, StringComparison.OrdinalIgnoreCase)))
             return Results.Ok(new Response("unknown", "Posso ajudar apenas com manutenção residencial.", null));
 
@@ -37,9 +40,9 @@ public static class ChatHandler
             var tips = result.Tips?.Select(t => new TipDto(t.Type, t.Tip)).ToList();
             return Results.Ok(new Response(result.Action, result.Reply, tips));
         }
-        catch (AgentException ex)
+        catch (AgentException)
         {
-            return Results.Problem(ex.Message, statusCode: 502);
+            return Results.Problem("AI service unavailable.", statusCode: 502);
         }
     }
 }

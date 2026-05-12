@@ -28,6 +28,19 @@ public static class AddEquipmentHandler
         if (string.IsNullOrWhiteSpace(req.Type) || string.IsNullOrWhiteSpace(req.Name))
             return Results.BadRequest(new { error = "Type and name are required." });
 
+        string normalizedType;
+        try
+        {
+            var norm = await agent.NormalizeEquipmentTypeAsync(req.Type, req.Name, home.Type, ct);
+            if (!norm.Valid)
+                return Results.BadRequest(new { error = norm.Reason });
+            normalizedType = norm.NormalizedType ?? req.Type.Trim();
+        }
+        catch (AgentException)
+        {
+            return Results.Problem("AI service unavailable.", statusCode: 502);
+        }
+
         DateOnly? installedAt = null;
         if (req.InstalledAt is not null && DateOnly.TryParse(req.InstalledAt, out var parsed))
             installedAt = parsed;
@@ -35,7 +48,7 @@ public static class AddEquipmentHandler
         var equipment = new Data.Entities.Equipment
         {
             HomeId = homeId,
-            Type = req.Type.Trim(),
+            Type = normalizedType,
             Name = req.Name.Trim(),
             InstalledAt = installedAt
         };

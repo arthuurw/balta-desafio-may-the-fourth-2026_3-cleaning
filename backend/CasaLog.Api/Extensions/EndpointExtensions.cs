@@ -18,6 +18,7 @@ internal static class EndpointExtensions
         var homes = app.MapGroup("/api/homes").RequireAuthorization();
         homes.MapPost("/", CreateHomeHandler.Handle);
         homes.MapGet("/mine", GetHomeHandler.Handle);
+        homes.MapGet("/{homeId:guid}/report", GetHomeReportHandler.Handle);
 
         var equipment = app.MapGroup("/api/homes/{homeId:guid}/equipment").RequireAuthorization();
         equipment.MapPost("/", AddEquipmentHandler.Handle);

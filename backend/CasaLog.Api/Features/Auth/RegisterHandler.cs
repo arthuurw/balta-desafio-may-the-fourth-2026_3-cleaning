@@ -10,8 +10,17 @@ public static class RegisterHandler
         if (string.IsNullOrWhiteSpace(req.Name) || string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.Password))
             return Results.BadRequest(new { error = "Name, email and password are required." });
 
+        if (req.Name.Length > 100)
+            return Results.BadRequest(new { error = "Name must be 100 characters or fewer." });
+
+        if (req.Email.Length > 254)
+            return Results.BadRequest(new { error = "Email must be 254 characters or fewer." });
+
         if (req.Password.Length < 6)
             return Results.BadRequest(new { error = "Password must be at least 6 characters." });
+
+        if (req.Password.Length > 128)
+            return Results.BadRequest(new { error = "Password must be 128 characters or fewer." });
 
         if (await db.Users.AnyAsync(u => u.Email == req.Email.ToLower(), ct))
             return Results.Conflict(new { error = "Email already in use." });

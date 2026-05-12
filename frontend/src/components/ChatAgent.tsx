@@ -2,14 +2,17 @@ import { useState } from 'react'
 import { api } from '../services/api'
 
 interface Message {
+  id: number
   role: 'user' | 'agent'
   text: string
   tips?: { type: string; tip: string }[]
 }
 
+let nextId = 0
+
 export function ChatAgent() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'agent', text: 'Olá! Sou seu assistente de manutenção residencial. Como posso ajudar?' }
+    { id: nextId++, role: 'agent', text: 'Olá! Sou seu assistente de manutenção residencial. Como posso ajudar?' }
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,18 +21,18 @@ export function ChatAgent() {
     const text = input.trim()
     if (!text || loading) return
     setInput('')
-    setMessages((prev) => [...prev, { role: 'user', text }])
+    setMessages((prev) => [...prev, { id: nextId++, role: 'user', text }])
     setLoading(true)
     try {
       const res = await api.chat.send(text)
       setMessages((prev) => [
         ...prev,
-        { role: 'agent', text: res.reply, tips: res.tips }
+        { id: nextId++, role: 'agent', text: res.reply, tips: res.tips }
       ])
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
-        { role: 'agent', text: 'Desculpe, não consegui processar sua mensagem. Tente novamente.' }
+        { id: nextId++, role: 'agent', text: 'Desculpe, não consegui processar sua mensagem. Tente novamente.' }
       ])
     } finally {
       setLoading(false)
@@ -39,8 +42,8 @@ export function ChatAgent() {
   return (
     <div className="flex flex-col h-[500px]">
       <div className="flex-1 overflow-y-auto space-y-3 pb-3">
-        {messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+        {messages.map((msg) => (
+          <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
               className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
                 msg.role === 'user'
@@ -77,6 +80,7 @@ export function ChatAgent() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && send()}
           placeholder="Pergunte sobre manutenção..."
+          maxLength={2000}
           className="flex-1 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={loading}
         />

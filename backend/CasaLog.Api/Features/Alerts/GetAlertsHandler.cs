@@ -7,6 +7,11 @@ public static class GetAlertsHandler
 
     private static readonly TimeSpan CheckThrottle = TimeSpan.FromHours(1);
 
+    private static readonly TimeZoneInfo BrtZone =
+        System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)
+            ? TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time")
+            : TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo");
+
     public static async Task<IResult> Handle(
         HttpContext ctx,
         CasaLogContext db,
@@ -29,7 +34,7 @@ public static class GetAlertsHandler
 
         if (shouldCheck)
         {
-            var today = DateOnly.FromDateTime(now);
+            var today = DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(now, BrtZone));
             var pendingTasks = home.ScheduledTasks
                 .Where(t => t.Status == "pending" && t.ScheduledDate <= today.AddDays(30))
                 .ToList();

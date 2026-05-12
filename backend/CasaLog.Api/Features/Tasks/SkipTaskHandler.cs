@@ -32,7 +32,7 @@ public static class SkipTaskHandler
         ScheduledTask? nextTask = null;
         try
         {
-            var reschedule = await agent.RescheduleTaskAsync(home, task, skipped: true, ct);
+            var reschedule = await agent.RescheduleTaskAsync(home, task, skipped: true, notes: null, ct);
             if (DateOnly.TryParse(reschedule.NewDate, out var newDate))
             {
                 nextTask = new ScheduledTask

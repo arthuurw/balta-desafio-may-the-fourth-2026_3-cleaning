@@ -5,17 +5,19 @@ import { TaskList } from './components/TaskList'
 import { AlertsPanel } from './components/AlertsPanel'
 import { ChatAgent } from './components/ChatAgent'
 import { MaintenanceCalendar } from './components/MaintenanceCalendar'
+import { HelpPage } from './components/HelpPage'
 import { useAuth } from './contexts/AuthContext'
 import { api } from './services/api'
 import type { Home, Task } from './types'
 
-type Tab = 'calendar' | 'tasks' | 'alerts' | 'chat'
+type Tab = 'calendar' | 'tasks' | 'alerts' | 'chat' | 'help'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'calendar', label: 'Calendário' },
   { id: 'tasks', label: 'Tarefas' },
   { id: 'alerts', label: 'Alertas' },
   { id: 'chat', label: 'Chat IA' },
+  { id: 'help', label: '?' },
 ]
 
 export default function App() {
@@ -111,6 +113,7 @@ export default function App() {
         )}
         {tab === 'alerts' && <AlertsPanel />}
         {tab === 'chat' && <ChatAgent />}
+        {tab === 'help' && <HelpPage />}
       </main>
     </div>
   )

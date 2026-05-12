@@ -4,7 +4,8 @@ public static class CreateHomeHandler
 {
     public record Request(string Type, bool HasGarden);
     public record TaskSummary(Guid Id, string Type, string ScheduledDate, string Priority, string Reason);
-    public record Response(Guid Id, string Type, bool HasGarden, List<TaskSummary> Tasks);
+    public record SuggestionDto(string Type, string Name, string Reason);
+    public record Response(Guid Id, string Type, bool HasGarden, List<TaskSummary> Tasks, List<SuggestionDto> Suggestions);
 
     public static async Task<IResult> Handle(
         Request req,
@@ -32,24 +33,29 @@ public static class CreateHomeHandler
         db.Homes.Add(home);
         await db.SaveChangesAsync(ct);
 
+        var scheduleTask = agent.GenerateScheduleAsync(home, ct);
+        var suggestTask = agent.SuggestEquipmentAsync(home, ct);
+
         List<ScheduledTask> tasks = [];
-        try
+        List<SuggestionDto> suggestions = [];
+
+        try { await Task.WhenAll(scheduleTask, suggestTask); } catch { }
+
+        if (scheduleTask.IsCompletedSuccessfully)
         {
-            var schedule = await agent.GenerateScheduleAsync(home, ct);
-            tasks = MapToTasks(schedule.Tasks, home.Id, home.Equipment);
+            tasks = MapToTasks(scheduleTask.Result.Tasks, home.Id, home.Equipment);
             db.ScheduledTasks.AddRange(tasks);
             await db.SaveChangesAsync(ct);
         }
-        catch (AgentException)
-        {
-            // AI unavailable — home created, tasks pending
-        }
+
+        if (suggestTask.IsCompletedSuccessfully)
+            suggestions = suggestTask.Result?.Suggestions?.Select(s => new SuggestionDto(s.Type, s.Name, s.Reason)).ToList() ?? [];
 
         var summary = tasks.Select(t => new TaskSummary(
             t.Id, t.Type, t.ScheduledDate.ToString("yyyy-MM-dd"), t.Priority, t.Reason
         )).ToList();
 
-        return Results.Created($"/api/homes/{home.Id}", new Response(home.Id, home.Type, home.HasGarden, summary));
+        return Results.Created($"/api/homes/{home.Id}", new Response(home.Id, home.Type, home.HasGarden, summary, suggestions));
     }
 
     internal static List<ScheduledTask> MapToTasks(AgentTaskItem[] items, Guid homeId, IReadOnlyList<Equipment> equipment)

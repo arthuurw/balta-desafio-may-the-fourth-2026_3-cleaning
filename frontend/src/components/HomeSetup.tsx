@@ -7,11 +7,18 @@ interface Props {
 }
 
 const EQUIPMENT_TYPES = [
-  { value: 'ac_cleaning', label: 'Ar-Condicionado' },
-  { value: 'water_filter_change', label: 'Filtro de Água' },
-  { value: 'water_tank_cleaning', label: 'Caixa d\'Água' },
-  { value: 'gas_check', label: 'Instalação de Gás' },
-  { value: 'fire_extinguisher_check', label: 'Extintor' },
+  { value: 'ac', label: 'Ar-Condicionado' },
+  { value: 'water_filter', label: 'Filtro de Água' },
+  { value: 'water_tank', label: 'Caixa d\'Água' },
+  { value: 'gas', label: 'Instalação de Gás' },
+  { value: 'fire_extinguisher', label: 'Extintor' },
+  { value: 'electrical', label: 'Instalação Elétrica' },
+  { value: 'roof', label: 'Telhado' },
+  { value: 'gutter', label: 'Calhas' },
+  { value: 'pool', label: 'Piscina' },
+  { value: 'solar_panel', label: 'Painel Solar' },
+  { value: 'boiler', label: 'Aquecedor / Boiler' },
+  { value: 'garden', label: 'Jardim' },
 ]
 
 export function HomeSetup({ onCreated }: Props) {

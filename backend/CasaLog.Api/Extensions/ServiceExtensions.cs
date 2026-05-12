@@ -20,6 +20,7 @@ internal static class ServiceExtensions
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opt =>
             {
+                opt.MapInboundClaims = false;
                 opt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -36,10 +37,10 @@ internal static class ServiceExtensions
         services.AddAuthorization();
 
         services.AddSingleton<IChatClient>(_ => LlmClientFactory.Create(config));
-        services.AddScoped<IHomeAgent, HomeAgent>();
+        services.AddSingleton<IHomeAgent, HomeAgent>();
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(c => c.CustomSchemaIds(t => t.FullName?.Replace('+', '.')));
 
         services.AddCors(opt => opt.AddDefaultPolicy(p =>
             p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));

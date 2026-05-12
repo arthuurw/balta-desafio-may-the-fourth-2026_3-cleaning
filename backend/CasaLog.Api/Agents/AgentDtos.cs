@@ -51,3 +51,38 @@ public record ChatResponse(
     [property: JsonPropertyName("reply")] string Reply,
     [property: JsonPropertyName("tips")] SeasonalTip[]? Tips
 );
+
+public record SuggestEquipmentResponse(
+    [property: JsonPropertyName("action")] string Action,
+    [property: JsonPropertyName("suggestions")] EquipmentSuggestion[] Suggestions,
+    [property: JsonPropertyName("reply")] string Reply
+);
+
+public record EquipmentSuggestion(
+    [property: JsonPropertyName("type")] string Type,
+    [property: JsonPropertyName("name")] string Name,
+    [property: JsonPropertyName("reason")] string Reason
+);
+
+public record HomeReportResponse(
+    [property: JsonPropertyName("action")] string Action,
+    [property: JsonPropertyName("score")] int Score,
+    [property: JsonPropertyName("status")] string Status,
+    [property: JsonPropertyName("summary")] string Summary,
+    [property: JsonPropertyName("recommendations")] ReportRecommendation[] Recommendations,
+    [property: JsonPropertyName("reply")] string Reply
+);
+
+public record ReportRecommendation(
+    [property: JsonPropertyName("type")] string Type,
+    [property: JsonPropertyName("message")] string Message,
+    [property: JsonPropertyName("priority")] string Priority
+);
+
+public record NormalizeEquipmentResponse(
+    [property: JsonPropertyName("action")] string Action,
+    [property: JsonPropertyName("valid")] bool Valid,
+    [property: JsonPropertyName("normalizedType")] string? NormalizedType,
+    [property: JsonPropertyName("reason")] string Reason,
+    [property: JsonPropertyName("reply")] string Reply
+);
