@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CasaLog.Api.Tests/CasaLog.Api.Tests.csproj" />
+  <Project Path="CasaLog.Api/CasaLog.Api.csproj" />
+</Solution>
